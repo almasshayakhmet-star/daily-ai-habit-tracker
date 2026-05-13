@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ТОЛЫҚ САБАҚ КОНСТРУКТОРЫ – Python for циклі</title>
+<style>
+/* ─── RESET & BASE ───────────────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:"Segoe UI",Arial,sans-serif;
+  background:#f0f4f8;
+  color:#1e2a35;
+  font-size:14px;
+  line-height:1.55;
+}
+
+/* ─── PAGE WRAPPER ──────────────────────────────────────── */
+.page{max-width:1100px;margin:0 auto;padding:22px 16px 60px}
+
+/* ─── MAIN TITLE ─────────────────────────────────────────── */
+.main-title{
+  background:#0d2257;
+  color:#fff;
+  text-align:center;
+  font-size:1.9rem;
+  font-weight:900;
+  letter-spacing:3px;
+  padding:18px 24px;
+  border-radius:10px 10px 0 0;
+  margin-bottom:0;
+}
+
+/* ─── META BAR ───────────────────────────────────────────── */
+.meta-bar{
+  display:grid;
+  grid-template-columns:1fr 2fr 1fr 1fr;
+  gap:0;
+  border:2px solid #0d2257;
+  border-top:none;
+  border-radius:0 0 8px 8px;
+  overflow:hidden;
+  margin-bottom:18px;
+}
+.meta-cell{
+  padding:9px 14px;
+  font-size:.88rem;
+  border-right:1.5px solid #0d2257;
+}
+.meta-cell:last-child{border-right:none}
+.meta-cell .lbl{font-size:.72rem;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:2px}
+.meta-cell .val{font-weight:700;color:#0d2257;font-size:.95rem}
+/* cell accent colours from image */
+.mc-1{background:#e9f0fa}
+.mc-2{background:#e6f4ea}
+.mc-3{background:#f3e5f5}
+.mc-4{background:#fff8e1}
+
+/* ─── TOP 5-COLUMN GRID ─────────────────────────────────── */
+.top5{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:12px;
+  margin-bottom:16px;
+}
+@media(max-width:800px){.top5{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.top5{grid-template-columns:1fr}}
+
+.top-card{
+  border-radius:8px;
+  padding:14px 14px 16px;
+  border:1.5px solid;
+}
+.top-card .tc-title{
+  font-size:.72rem;font-weight:800;text-transform:uppercase;
+  letter-spacing:.6px;margin-bottom:8px;
+  display:flex;align-items:center;gap:6px;
+}
+.top-card .tc-icon{font-size:1.3rem}
+.top-card p{font-size:.87rem}
+
+/* individual card colours */
+.tc-kompetencia{background:#ddeeff;border-color:#4a90d9;color:#0d2257}
+.tc-kompetencia .tc-title{color:#0d2257}
+.tc-natije    {background:#e6f4ea;border-color:#4caf50;color:#1b5e20}
+.tc-natije    .tc-title{color:#1b5e20}
+.tc-maqsat    {background:#e8eaf6;border-color:#5c6bc0;color:#1a237e}
+.tc-maqsat    .tc-title{color:#1a237e}
+.tc-sabaq     {background:#fff8e1;border-color:#f9a825;color:#4a2800}
+.tc-sabaq     .tc-title{color:#e65100}
+.tc-tapsyrma  {background:#e0f2f1;border-color:#26a69a;color:#004d40}
+.tc-tapsyrma  .tc-title{color:#00695c}
+
+.tc-sabaq ul{padding-left:18px;font-size:.84rem;margin-top:4px}
+.tc-sabaq li{margin-bottom:4px}
+.tc-tapsyrma .level-list{display:flex;flex-direction:column;gap:4px;margin-top:6px}
+.tc-tapsyrma .level-badge{
+  display:inline-block;border-radius:4px;padding:3px 10px;
+  font-size:.78rem;font-weight:700;width:100%;text-align:center;
+}
+.lb-1{background:#c8e6c9;color:#1b5e20}
+.lb-2{background:#fff9c4;color:#5d4037}
+.lb-3{background:#ffccbc;color:#bf360c}
+
+/* ─── TASKS 3-COLUMN ─────────────────────────────────────── */
+.tasks3{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+  margin-bottom:16px;
+}
+@media(max-width:700px){.tasks3{grid-template-columns:1fr}}
+
+.task-card{
+  border-radius:8px;
+  padding:14px 16px;
+  border:1.5px solid;
+}
+.task-card .tk-head{
+  font-size:.82rem;font-weight:800;text-transform:uppercase;
+  letter-spacing:.4px;margin-bottom:8px;
+  padding-bottom:6px;border-bottom:1.5px solid currentColor;
+}
+.task-card p{font-size:.86rem;margin-bottom:10px}
+.task-card pre{
+  background:#fff;
+  border:1px solid #ccc;
+  border-radius:6px;
+  padding:10px 12px;
+  font-size:.8rem;
+  font-family:"Consolas","Courier New",monospace;
+  white-space:pre;
+  overflow-x:auto;
+  line-height:1.5;
+  color:#1e2a35;
+}
+
+.tk-1{background:#e8f5e9;border-color:#66bb6a;color:#1b5e20}
+.tk-2{background:#fffde7;border-color:#ffca28;color:#4a2800}
+.tk-3{background:#fce4ec;border-color:#ef9a9a;color:#880e4f}
+
+/* ─── BOTTOM 3-COLUMN ────────────────────────────────────── */
+.bot3{
+  display:grid;
+  grid-template-columns:1fr 1.6fr 1fr;
+  gap:14px;
+  margin-bottom:16px;
+}
+@media(max-width:700px){.bot3{grid-template-columns:1fr}}
+
+.bot-card{border-radius:8px;padding:14px 16px;border:1.5px solid}
+.bot-card .bc-title{
+  font-size:.8rem;font-weight:800;text-transform:uppercase;
+  letter-spacing:.6px;margin-bottom:10px;
+  display:flex;align-items:center;gap:6px;
+}
+.bc-icon{font-size:1.2rem}
+
+.bc-baga   {background:#fff8e1;border-color:#f9a825}
+.bc-baga   .bc-title{color:#e65100}
+.bc-desc   {background:#e0f7fa;border-color:#26c6da}
+.bc-desc   .bc-title{color:#00695c}
+.bc-reflex {background:#fce4ec;border-color:#f48fb1}
+.bc-reflex .bc-title{color:#880e4f}
+
+.bot-card ul{padding-left:18px;font-size:.85rem}
+.bot-card li{margin-bottom:5px}
+
+/* descriptor table */
+.desc-table{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:4px}
+.desc-table th{
+  background:#0d5966;color:#fff;
+  padding:6px 8px;text-align:center;font-size:.78rem;
+}
+.desc-table th:first-child{text-align:left}
+.desc-table td{
+  border:1px solid #b2ebf2;padding:5px 8px;
+  vertical-align:middle;
+}
+.desc-table td:not(:first-child){text-align:center;min-width:44px}
+.desc-table tr:nth-child(even) td{background:#e0f7fa55}
+.check-circle{
+  width:18px;height:18px;border-radius:50%;
+  border:1.5px solid #999;display:inline-block;
+}
+
+/* reflection */
+.reflex-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:12px;font-size:.86rem}
+.reflex-emoji{font-size:1.3rem;flex-shrink:0;margin-top:1px}
+.reflex-line{flex:1;border-bottom:1px solid #f48fb1;margin-top:14px}
+.reflex-qs{font-size:.83rem;color:#880e4f;font-weight:600;margin-bottom:2px}
+
+/* ─── FOOTER 3-COLUMN ────────────────────────────────────── */
+.footer3{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:14px;
+}
+@media(max-width:700px){.footer3{grid-template-columns:1fr}}
+
+.footer-card{border-radius:8px;padding:14px 16px;border:1.5px solid}
+.footer-card .fc-title{
+  font-size:.78rem;font-weight:800;text-transform:uppercase;
+  letter-spacing:.6px;margin-bottom:10px;
+  display:flex;align-items:center;gap:7px;
+}
+.fc-icon{font-size:1.3rem}
+.footer-card ul{padding-left:18px;font-size:.85rem}
+.footer-card li{margin-bottom:5px}
+
+.fc-methods{background:#e8eaf6;border-color:#7986cb}
+.fc-methods .fc-title{color:#283593}
+.fc-tools  {background:#e0f2f1;border-color:#4db6ac}
+.fc-tools  .fc-title{color:#004d40}
+.fc-result {background:#f3e5f5;border-color:#ce93d8}
+.fc-result .fc-title{color:#4a148c}
+
+/* ─── PRINT ──────────────────────────────────────────────── */
+@media print{
+  body{background:#fff}
+  .page{padding:10px}
+  .main-title{border-radius:0}
+  .no-print{display:none!important}
+  .top-card,.task-card,.bot-card,.footer-card{page-break-inside:avoid}
+}
+
+/* ─── PRINT BUTTON ───────────────────────────────────────── */
+.print-btn{
+  position:fixed;bottom:24px;right:24px;
+  background:#0d2257;color:#fff;border:none;
+  border-radius:50px;padding:12px 22px;
+  font-size:.9rem;font-weight:700;cursor:pointer;
+  box-shadow:0 4px 14px rgba(0,0,0,.25);
+  display:flex;align-items:center;gap:8px;
+  z-index:10;
+}
+.print-btn:hover{background:#1a4f8a}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ══════════════════════════════════════════════════
+       TITLE
+  ══════════════════════════════════════════════════════ -->
+  <div class="main-title">ТОЛЫҚ САБАҚ КОНСТРУКТОРЫ</div>
+
+  <!-- ══════════════════════════════════════════════════
+       META BAR
+  ══════════════════════════════════════════════════════ -->
+  <div class="meta-bar">
+    <div class="meta-cell mc-1">
+      <span class="lbl">Пән</span>
+      <span class="val">Информатика</span>
+    </div>
+    <div class="meta-cell mc-2">
+      <span class="lbl">Тақырыбы</span>
+      <span class="val">Python тіліндегі циклдер (for циклі)</span>
+    </div>
+    <div class="meta-cell mc-3">
+      <span class="lbl">Сынып</span>
+      <span class="val">8 сынып</span>
+    </div>
+    <div class="meta-cell mc-4">
+      <span class="lbl">Ұзақтығы</span>
+      <span class="val">45 минут</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       TOP 5 CARDS
+  ══════════════════════════════════════════════════════ -->
+  <div class="top5">
+
+    <!-- 1. Негізгі құзырет -->
+    <div class="top-card tc-kompetencia">
+      <div class="tc-title">
+        <span class="tc-icon">🎯</span>
+        1. НЕГІЗГІ ҚҰЗЫРЕТ
+      </div>
+      <p>
+        Алгоритмдік ойлау және бағдарламалау дағдыларын қолдану арқылы мәселелерді шешу.
+      </p>
+    </div>
+
+    <!-- 2. Оқу нәтижесі -->
+    <div class="top-card tc-natije">
+      <div class="tc-title">
+        <span class="tc-icon">📈</span>
+        2. ОҚУ НӘТИЖЕСІ
+      </div>
+      <p>
+        Оқушы бағдарламалау құрылымдарын пайдаланып, есептерді шешеді және қарапайым бағдарламалар жасайды.
+      </p>
+    </div>
+
+    <!-- 3. Оқу мақсаты -->
+    <div class="top-card tc-maqsat">
+      <div class="tc-title">
+        <span class="tc-icon">📖</span>
+        3. ОҚУ МАҚСАТЫ
+      </div>
+      <p>
+        for циклінің құрылымын түсіндіреді және оны есептерді шешуде қолданады.
+      </p>
+    </div>
+
+    <!-- 4. Сабақ мақсаты -->
+    <div class="top-card tc-sabaq">
+      <div class="tc-title">
+        <span class="tc-icon">📋</span>
+        4. САБАҚ МАҚСАТЫ
+      </div>
+      <ul>
+        <li>for циклінің синтаксисін сипаттайды;</li>
+        <li>for циклін қолданып бағдарлама жасайды;</li>
+        <li>циклдің жұмыс нәтижесін талдайды;</li>
+        <li>есептерді цикл арқылы шешеді.</li>
+      </ul>
+    </div>
+
+    <!-- 5. Тапсырма -->
+    <div class="top-card tc-tapsyrma">
+      <div class="tc-title">
+        <span class="tc-icon">💻</span>
+        5. ТАПСЫРМА
+      </div>
+      <p style="font-size:.83rem;margin-bottom:8px">Практикалық тапсырма (деңгейлік):</p>
+      <div class="level-list">
+        <span class="level-badge lb-1">1-деңгей (бастапқы)</span>
+        <span class="level-badge lb-2">2-деңгей (орташа)</span>
+        <span class="level-badge lb-3">3-деңгей (жоғары)</span>
+      </div>
+    </div>
+
+  </div><!-- /top5 -->
+
+  <!-- ══════════════════════════════════════════════════
+       TASK CARDS (3 levels)
+  ══════════════════════════════════════════════════════ -->
+  <div class="tasks3">
+
+    <!-- Level 1 -->
+    <div class="task-card tk-1">
+      <div class="tk-head">1-деңгей (бастапқы)</div>
+      <p>
+        1-ден 10-ға дейінгі сандарды экранға шығаратын бағдарлама жазыңыз.
+      </p>
+      <pre>for i in range(1, 11):
+    print(i)</pre>
+    </div>
+
+    <!-- Level 2 -->
+    <div class="task-card tk-2">
+      <div class="tk-head">2-деңгей (орташа)</div>
+      <p>
+        1-ден n-ге дейінгі сандардың қосындысын есептейтін бағдарлама жазыңыз
+        (n пайдаланушы енгізеді).
+      </p>
+      <pre>n = int(input("n мәнін енгізіңіз: "))
+s = 0
+for i in range(1, n+1):
+    s += i
+print("Қосынды:", s)</pre>
+    </div>
+
+    <!-- Level 3 -->
+    <div class="task-card tk-3">
+      <div class="tk-head">3-деңгей (жоғары)</div>
+      <p>
+        Берілген n санына дейінгі барлық жай сандарды шығаратын бағдарлама жазыңыз.
+      </p>
+      <pre>n = int(input("n мәнін енгізіңіз: "))
+for i in range(2, n+1):
+    bolgyshtar = 0
+    for j in range(2, i):
+        if i % j == 0:
+            bolgyshtar = 1
+            break
+    if bolgyshtar == 0:
+        print(i)</pre>
+    </div>
+
+  </div><!-- /tasks3 -->
+
+  <!-- ══════════════════════════════════════════════════
+       BOTTOM 3: БАҒАЛАУ / ДЕСКРИПТОР / РЕФЛЕКСИЯ
+  ══════════════════════════════════════════════════════ -->
+  <div class="bot3">
+
+    <!-- 6. Бағалау критерийі -->
+    <div class="bot-card bc-baga">
+      <div class="bc-title">
+        <span class="bc-icon">🏅</span>
+        6. БАҒАЛАУ КРИТЕРИЙІ
+      </div>
+      <ul>
+        <li>for циклінің синтаксисін дұрыс жазады.</li>
+        <li>Циклді дұрыс қолданады.</li>
+        <li>Есептің шартын дұрыс түсінеді.</li>
+        <li>Нәтижені дұрыс шығарады.</li>
+        <li>Кодты тиімді және дұрыс құрастырады.</li>
+      </ul>
+    </div>
+
+    <!-- 7. Дескриптор -->
+    <div class="bot-card bc-desc">
+      <div class="bc-title">
+        <span class="bc-icon">✅</span>
+        7. ДЕСКРИПТОР (оқушы):
+      </div>
+      <table class="desc-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Иә</th>
+            <th>Ішінара</th>
+            <th>Жоқ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>for циклінің құрылымын дұрыс жазады</td>
+            <td><span class="check-circle"></span></td>
+            <td><span class="check-circle"></span></td>
+            <td><span class="check-circle"></span></td>
+          </tr>
+          <tr>
+            <td>цикл аралығын дұрыс анықтайды</td>
+            <td><span class="check-circle"></span></td>
+            <td><span class="check-circle"></span></td>
+            <td><span class="check-circle"></span></td>
+          </tr>
+          <tr>
+            <td>қажетті амалдарды цикл ішінде орындайды</td>
+            <td><span class="check-circle"></span></td>
+            <td><span class="check-circle"></span></td>
+            <td><span class="check-circle"></span></td>
+          </tr>
+          <tr>
+            <td>нәтижені дұрыс шығарады</td>
+            <td><span class="check-circle"></span></td>
+            <td><span class="check-circle"></span></td>
+            <td><span class="check-circle"></span></td>
+          </tr>
+          <tr>
+            <td>кодта қателік жоқ</td>
+            <td><span class="check-circle"></span></td>
+            <td><span class="check-circle"></span></td>
+            <td><span class="check-circle"></span></td>
+          </tr>
+          <tr>
+            <td>тапсырманы толық орындайды</td>
+            <td><span class="check-circle"></span></td>
+            <td><span class="check-circle"></span></td>
+            <td><span class="check-circle"></span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 8. Рефлексия -->
+    <div class="bot-card bc-reflex">
+      <div class="bc-title">
+        <span class="bc-icon">💡</span>
+        8. РЕФЛЕКСИЯ<br><small style="font-size:.78rem;font-weight:600">«БББ» әдісі</small>
+      </div>
+      <div class="reflex-row">
+        <span class="reflex-emoji">😊</span>
+        <div style="flex:1">
+          <div class="reflex-qs">Білемін – сабақтан не білдім?</div>
+          <div class="reflex-line"></div>
+        </div>
+      </div>
+      <div class="reflex-row">
+        <span class="reflex-emoji">😐</span>
+        <div style="flex:1">
+          <div class="reflex-qs">Білдім – мен үшін не жаңалық болды?</div>
+          <div class="reflex-line"></div>
+        </div>
+      </div>
+      <div class="reflex-row">
+        <span class="reflex-emoji">🤔</span>
+        <div style="flex:1">
+          <div class="reflex-qs">Білгім келеді – маған не қызық болды, не туралы әлі білгім келеді?</div>
+          <div class="reflex-line"></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /bot3 -->
+
+  <!-- ══════════════════════════════════════════════════
+       FOOTER 3: ӘДІСТЕР / ҚҰРАЛДАР / НӘТИЖЕ
+  ══════════════════════════════════════════════════════ -->
+  <div class="footer3">
+
+    <!-- Қолданылатын әдіс-тәсілдер -->
+    <div class="footer-card fc-methods">
+      <div class="fc-title">
+        <span class="fc-icon">⚙️</span>
+        ҚОЛДАНЫЛАТЫН ӘДІС-ТӘСІЛДЕР
+      </div>
+      <ul>
+        <li>Түсіндіру, көрсету</li>
+        <li>Практикалық жұмыс</li>
+        <li>Жұптық және топтық жұмыс</li>
+        <li>Ойлан – талқыла – бөліс</li>
+      </ul>
+    </div>
+
+    <!-- Қолданылатын құралдар -->
+    <div class="footer-card fc-tools">
+      <div class="fc-title">
+        <span class="fc-icon">💻</span>
+        ҚОЛДАНЫЛАТЫН ҚҰРАЛДАР
+      </div>
+      <ul>
+        <li>Компьютер</li>
+        <li>Python бағдарламалау ортасы (IDLE, Thonny)</li>
+        <li>Интерактивті тақта</li>
+        <li>Оқулық, тапсырма парақтары</li>
+      </ul>
+    </div>
+
+    <!-- Күтілетін нәтиже -->
+    <div class="footer-card fc-result">
+      <div class="fc-title">
+        <span class="fc-icon">🏆</span>
+        КҮТІЛЕТІН НӘТИЖЕ
+      </div>
+      <ul>
+        <li>Оқушы for циклінің құрылымын түсінеді;</li>
+        <li>for циклін қолданып, есептерді шеше алады;</li>
+        <li>Алгоритмдік ойлау және код жазу дағдылары дамиды.</li>
+      </ul>
+    </div>
+
+  </div><!-- /footer3 -->
+
+</div><!-- /page -->
+
+<!-- Print button (hidden on print) -->
+<button class="print-btn no-print" onclick="window.print()">🖨️ Басып шығару</button>
+
+</body>
+</html>
