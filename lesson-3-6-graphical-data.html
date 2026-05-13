@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3.6 – Graphical Representation of Data</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --blue:    #1a4f8a;
+      --lblue:   #d6e8f7;
+      --accent:  #2979c8;
+      --bg:      #f4f8fd;
+      --border:  #b8d0ea;
+      --text:    #1e2a35;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ── HEADER ─────────────────────────────────────────── */
+    header {
+      background: var(--blue);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 18px 36px;
+    }
+    header .num {
+      font-size: 3rem;
+      font-weight: 800;
+      letter-spacing: -2px;
+    }
+    header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    /* ── LAYOUT ─────────────────────────────────────────── */
+    .page { max-width: 1100px; margin: 0 auto; padding: 28px 20px 60px; }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 28px;
+      margin-bottom: 36px;
+    }
+    @media (max-width: 680px) {
+      .two-col { grid-template-columns: 1fr; }
+    }
+
+    /* ── BOXES ──────────────────────────────────────────── */
+    .you-will {
+      background: var(--lblue);
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+    }
+    .you-will h3 {
+      color: var(--blue);
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+    .you-will ul { padding-left: 16px; font-size: .9rem; }
+
+    .question-box {
+      background: var(--lblue);
+      border-left: 5px solid var(--accent);
+      border-radius: 8px;
+      padding: 14px 18px;
+      font-style: italic;
+      margin-bottom: 28px;
+    }
+
+    /* ── SECTION HEADINGS ───────────────────────────────── */
+    h2 {
+      color: var(--blue);
+      font-size: 1.3rem;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 4px;
+      margin: 28px 0 14px;
+    }
+
+    /* ── CHART TYPE CARDS ───────────────────────────────── */
+    .chart-types { display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
+    .chart-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 18px;
+    }
+    .chart-card strong { color: var(--blue); }
+
+    /* ── STEPS ──────────────────────────────────────────── */
+    ol.steps { padding-left: 22px; margin-bottom: 20px; }
+    ol.steps li { margin-bottom: 6px; }
+
+    /* ── DATA TABLE ─────────────────────────────────────── */
+    .tbl-wrap { overflow-x: auto; margin-bottom: 20px; }
+    table {
+      border-collapse: collapse;
+      min-width: 360px;
+      width: 100%;
+      font-size: .9rem;
+    }
+    th {
+      background: var(--blue);
+      color: #fff;
+      padding: 8px 12px;
+      text-align: center;
+    }
+    td {
+      border: 1px solid var(--border);
+      padding: 7px 12px;
+      text-align: center;
+    }
+    tr:nth-child(even) td { background: var(--lblue); }
+    .avg-col { background: #cce4b0 !important; font-weight: 700; }
+
+    /* ── CHART CONTAINERS ───────────────────────────────── */
+    .chart-container {
+      position: relative;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 28px;
+    }
+    .chart-container canvas { max-height: 340px; }
+
+    /* ── PRACTICE ───────────────────────────────────────── */
+    .practice-block {
+      background: #fff;
+      border: 2px solid var(--accent);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 28px;
+    }
+    .practice-block .pr-label {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+      font-size: .85rem;
+      padding: 2px 10px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+
+    /* ── LITERACY ───────────────────────────────────────── */
+    .literacy {
+      background: #fff3cd;
+      border: 1px solid #f0c040;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 28px;
+    }
+    .literacy h3 { color: #7a5000; margin-bottom: 8px; }
+    .literacy ol { padding-left: 20px; }
+    .literacy li { margin-bottom: 6px; }
+
+    /* ── TERMINOLOGY ────────────────────────────────────── */
+    .terminology {
+      background: var(--lblue);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 20px;
+    }
+    .terminology h3 { color: var(--blue); margin-bottom: 10px; }
+    .term-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 8px;
+    }
+    .term-item { font-size: .9rem; }
+    .term-item strong { color: var(--blue); }
+
+    /* ── REGION TABLE ───────────────────────────────────── */
+    .region-table td:first-child { text-align: left; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="num">3.6</div>
+  <h1>Graphical Representation of Data</h1>
+</header>
+
+<div class="page">
+
+  <!-- YOU WILL + OPENING QUESTION -->
+  <div class="two-col">
+    <div class="you-will">
+      <h3>📌 You will:</h3>
+      <ul>
+        <li>Apply conditional formatting in a spreadsheet.</li>
+        <li>Create bar, line, and pie charts.</li>
+        <li>Analyse data using charts.</li>
+      </ul>
+    </div>
+    <div class="question-box">
+      💡 <em>What is a graphical representation of data?</em>
+    </div>
+  </div>
+
+  <!-- THEORY: CHART -->
+  <h2>Chart</h2>
+  <p>
+    A <strong>chart</strong>, also called a <strong>graph</strong>, is a graphical representation of data.
+    Charts have different formats such as <em>bar chart</em>, <em>line chart</em>, and <em>pie chart</em>.
+  </p>
+
+  <div class="chart-types" style="margin-top:16px;">
+    <div class="chart-card">
+      <strong>Bar chart</strong> – Use a bar chart when you want to compare individual items.
+      <br><em>(e.g. prices of different smartphones – Picture 3.6.1)</em>
+    </div>
+    <div class="chart-card">
+      <strong>Line chart</strong> – Use a line chart when you want to show rate of change.
+      <br><em>(e.g. change of temperature during the week – Picture 3.6.2)</em>
+    </div>
+    <div class="chart-card">
+      <strong>Pie chart</strong> – Use a pie chart when you want to visualise a part-to-whole relationship in percentages.
+      <br><em>(e.g. time spent for different activities – Pic. 3.6.3)</em>
+    </div>
+  </div>
+
+  <!-- HOW TO CREATE A CHART -->
+  <h2>How to create a chart</h2>
+  <p>To create a chart, do the following steps:</p>
+  <ol class="steps">
+    <li>Create a table on the range <strong>A1:E6</strong> (Picture 3.6.4).</li>
+    <li>Select the range <strong>A2:E6</strong>.</li>
+    <li>Click on <strong>Insert → Chart</strong>.</li>
+    <li>Set up / customise the chart data, select chart type, etc. on the chart editor toolbar.</li>
+  </ol>
+
+  <!-- ICT EXAM RESULTS TABLE -->
+  <h2>Example – ICT Exam Results (Picture 3.6.4)</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Exam #1</th>
+          <th>Exam #2</th>
+          <th>Exam #3</th>
+          <th>Average</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Aibek</td>  <td>75%</td><td>90%</td><td>80%</td><td class="avg-col">82%</td></tr>
+        <tr><td>Maxat</td>  <td>65%</td><td>74%</td><td>80%</td><td class="avg-col">73%</td></tr>
+        <tr><td>Aigerim</td><td>85%</td><td>62%</td><td>57%</td><td class="avg-col">68%</td></tr>
+        <tr><td>Aisha</td>  <td>100%</td><td>94%</td><td>89%</td><td class="avg-col">94%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- BAR CHART: ICT EXAM RESULTS -->
+  <div class="chart-container">
+    <canvas id="examBar"></canvas>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       PRACTICE 1 – Kazakhstan regions pie chart
+       ══════════════════════════════════════════════════════ -->
+  <div class="practice-block">
+    <div class="pr-label">Practice 1</div>
+    <p>
+      As you know, there are <strong>14 regions</strong> in Kazakhstan.
+      Find information about the area of each region. Make a table using the following information:
+    </p>
+    <ol style="padding-left:20px; margin:10px 0;">
+      <li>Name of a region;</li>
+      <li>Area size in km².</li>
+    </ol>
+    <p>Make a pie chart that shows the percentage of each region's area (Picture 3.6.5).</p>
+
+    <br>
+    <div class="tbl-wrap">
+      <table class="region-table">
+        <thead>
+          <tr><th>Region</th><th>Area (km²)</th><th>% of Total</th></tr>
+        </thead>
+        <tbody id="regionTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="chart-container">
+    <canvas id="regionPie"></canvas>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       PRACTICE 2 – Income & Expenses line chart
+       ══════════════════════════════════════════════════════ -->
+  <div class="practice-block">
+    <div class="pr-label">Practice 2</div>
+    <p>
+      Given half-year income and expenses of a company.
+      Make a suitable chart to analyse the given data.
+    </p>
+    <br>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr><th>Months</th><th>Incomes (₸)</th><th>Expenses (₸)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>January</td>  <td>500,000</td><td>120,000</td></tr>
+          <tr><td>February</td> <td>350,000</td><td>100,000</td></tr>
+          <tr><td>March</td>    <td>700,000</td><td>80,000</td></tr>
+          <tr><td>April</td>    <td>600,000</td><td>120,000</td></tr>
+          <tr><td>May</td>      <td>500,000</td><td>50,000</td></tr>
+          <tr><td>June</td>     <td>650,000</td><td>60,000</td></tr>
+          <tr><td>July</td>     <td>900,000</td><td>55,000</td></tr>
+          <tr><td>August</td>   <td>860,000</td><td>60,000</td></tr>
+          <tr><td>September</td><td>546,000</td><td>70,000</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="chart-container">
+    <canvas id="incomeExpenseChart"></canvas>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       PRACTICE 3 – Summer Olympics 2016 medal bar chart
+       ══════════════════════════════════════════════════════ -->
+  <div class="practice-block">
+    <div class="pr-label">Practice 3</div>
+    <p>Given Summer Olympics medal table 2016. Make a suitable chart to analyse the given data.</p>
+    <br>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr><th>Rank</th><th>Country</th><th>Gold</th><th>Silver</th><th>Bronze</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>United States (USA)</td><td>46</td><td>37</td><td>38</td></tr>
+          <tr><td>2</td><td>Great Britain (GBR)</td><td>27</td><td>23</td><td>17</td></tr>
+          <tr><td>3</td><td>China (CHN)</td>        <td>26</td><td>18</td><td>26</td></tr>
+          <tr><td>4</td><td>Russia (RUS)</td>       <td>19</td><td>17</td><td>19</td></tr>
+          <tr><td>5</td><td>Germany (GER)</td>      <td>17</td><td>10</td><td>15</td></tr>
+          <tr><td>6</td><td>Japan (JPN)</td>        <td>12</td><td>8</td> <td>21</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="chart-container">
+    <canvas id="olympicsBar"></canvas>
+  </div>
+
+  <!-- LITERACY -->
+  <div class="literacy">
+    <h3>📖 Literacy</h3>
+    <ol>
+      <li>What are the differences between bar, line, and pie charts?</li>
+      <li>
+        You have got several exams and now you want to analyse them all.
+        Which chart is the best for doing this task?
+      </li>
+    </ol>
+  </div>
+
+  <!-- TERMINOLOGY -->
+  <div class="terminology">
+    <h3>📚 Terminology</h3>
+    <div class="term-grid">
+      <div class="term-item"><strong>representation</strong> – өрсету / представление</div>
+      <div class="term-item"><strong>chart</strong> – диаграмма / диаграмма</div>
+      <div class="term-item"><strong>income</strong> – кіріс / доход</div>
+      <div class="term-item"><strong>to analyse</strong> – талдау / анализировать</div>
+      <div class="term-item"><strong>expense</strong> – шығын / расходы</div>
+      <div class="term-item"><strong>graphical</strong> – графикалық / графический</div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+/* ── Colour palette ─────────────────────────────────── */
+const COLORS = {
+  blue:   '#1a4f8a',
+  red:    '#e05252',
+  green:  '#4caf50',
+  orange: '#ff9800',
+  purple: '#9c27b0',
+  teal:   '#009688',
+  gold:   '#ffd700',
+  silver: '#c0c0c0',
+  bronze: '#cd7f32',
+};
+
+/* ── 1. ICT Exam Results – Bar Chart ─────────────────── */
+new Chart(document.getElementById('examBar'), {
+  type: 'bar',
+  data: {
+    labels: ['Aibek', 'Maxat', 'Aigerim', 'Aisha'],
+    datasets: [
+      { label: 'Exam #1', data: [75, 65, 85, 100], backgroundColor: COLORS.blue },
+      { label: 'Exam #2', data: [90, 74, 62, 94],  backgroundColor: COLORS.red },
+      { label: 'Exam #3', data: [80, 80, 57, 89],  backgroundColor: COLORS.orange },
+      { label: 'Average', data: [82, 73, 68, 94],  backgroundColor: COLORS.green },
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      title: { display: true, text: 'ICT Exam Results', font: { size: 16 } },
+      legend: { position: 'top' }
+    },
+    scales: {
+      y: { beginAtZero: true, max: 110, title: { display: true, text: 'Score (%)' } }
+    }
+  }
+});
+
+/* ── 2. Kazakhstan Regions – Pie Chart ───────────────── */
+const regions = [
+  { name: 'Akmola',      area: 146200 },
+  { name: 'Aktobe',      area: 300600 },
+  { name: 'Almaty',      area: 223900 },
+  { name: 'Atyrau',      area: 118600 },
+  { name: 'East',        area: 283200 },
+  { name: 'Zhambyl',     area: 144200 },
+  { name: 'West',        area: 151300 },
+  { name: 'Karagandy',   area: 428000 },
+  { name: 'Kostanay',    area: 196000 },
+  { name: 'Kyzylorda',   area: 226000 },
+  { name: 'Mangystau',   area: 165600 },
+  { name: 'Pavlodar',    area: 124800 },
+  { name: 'North',       area: 98000  },
+  { name: 'South',       area: 117200 },
+];
+const total = regions.reduce((s, r) => s + r.area, 0);
+
+// fill region table
+const tbody = document.getElementById('regionTableBody');
+regions.forEach(r => {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td>${r.name}</td><td>${r.area.toLocaleString()}</td><td>${(r.area/total*100).toFixed(1)}%</td>`;
+  tbody.appendChild(tr);
+});
+
+const regionColors = [
+  '#1a4f8a','#2979c8','#4caf50','#ff9800','#e05252','#9c27b0',
+  '#009688','#ffd700','#795548','#607d8b','#e91e63','#00bcd4',
+  '#8bc34a','#ff5722'
+];
+
+new Chart(document.getElementById('regionPie'), {
+  type: 'doughnut',
+  data: {
+    labels: regions.map(r => r.name),
+    datasets: [{
+      data: regions.map(r => +(r.area / total * 100).toFixed(1)),
+      backgroundColor: regionColors,
+      borderWidth: 1,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      title: { display: true, text: 'Regions of Kazakhstan – Area Distribution (%)', font: { size: 16 } },
+      tooltip: {
+        callbacks: {
+          label: ctx => ` ${ctx.label}: ${ctx.parsed}%`
+        }
+      }
+    }
+  }
+});
+
+/* ── 3. Income & Expenses – Line Chart ───────────────── */
+const months = ['January','February','March','April','May','June','July','August','September'];
+new Chart(document.getElementById('incomeExpenseChart'), {
+  type: 'line',
+  data: {
+    labels: months,
+    datasets: [
+      {
+        label: 'Income (₸)',
+        data: [500000, 350000, 700000, 600000, 500000, 650000, 900000, 860000, 546000],
+        borderColor: COLORS.blue,
+        backgroundColor: 'rgba(26,79,138,0.12)',
+        fill: true,
+        tension: 0.35,
+        pointRadius: 5,
+      },
+      {
+        label: 'Expenses (₸)',
+        data: [120000, 100000, 80000, 120000, 50000, 60000, 55000, 60000, 70000],
+        borderColor: COLORS.red,
+        backgroundColor: 'rgba(224,82,82,0.10)',
+        fill: true,
+        tension: 0.35,
+        pointRadius: 5,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      title: { display: true, text: 'Company Income & Expenses (Jan – Sep)', font: { size: 16 } },
+    },
+    scales: {
+      y: { beginAtZero: true, title: { display: true, text: '₸ Tenge' } }
+    }
+  }
+});
+
+/* ── 4. Summer Olympics 2016 – Grouped Bar Chart ─────── */
+new Chart(document.getElementById('olympicsBar'), {
+  type: 'bar',
+  data: {
+    labels: ['USA', 'GBR', 'CHN', 'RUS', 'GER', 'JPN'],
+    datasets: [
+      { label: 'Gold',   data: [46,27,26,19,17,12], backgroundColor: COLORS.gold   },
+      { label: 'Silver', data: [37,23,18,17,10, 8], backgroundColor: COLORS.silver },
+      { label: 'Bronze', data: [38,17,26,19,15,21], backgroundColor: COLORS.bronze },
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      title: { display: true, text: 'Summer Olympics 2016 – Medal Table', font: { size: 16 } },
+      legend: { position: 'top' }
+    },
+    scales: {
+      y: { beginAtZero: true, title: { display: true, text: 'Number of medals' } }
+    }
+  }
+});
+</script>
+
+</body>
+</html>
