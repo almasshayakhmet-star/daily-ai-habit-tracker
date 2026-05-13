@@ -10,6 +10,7 @@
 | [lesson-python-for-loops.html](lesson-python-for-loops.html) | Python тіліндегі циклдер (for циклі) | 8-сынып |
 | [lesson-python-conditional-operators-grade-6.html](lesson-python-conditional-operators-grade-6.html) | Python тіліндегі шартты операторлар | 6-сынып |
 | [lesson-3-6-graphical-data.html](lesson-3-6-graphical-data.html) | 3.6 Деректерді графикалық бейнелеу | 7-сынып |
+| [lesson-graphical-representation-of-data-constructor.html](lesson-graphical-representation-of-data-constructor.html) | Graphical Representation of Data (толық сабақ конструкторы) | 7-сынып |
 
 ---
 
