@@ -51,16 +51,16 @@ except ValueError:
 ```python
 try:
     score = int(input("Ұпайды енгізіңіз (0-100): "))
-    if 90 <= score <= 100:
+    if score < 0 or score > 100:
+        print("Қате: ұпай 0-100 аралығында болуы керек")
+    elif 90 <= score <= 100:
         print("Баға: 5")
     elif 70 <= score <= 89:
         print("Баға: 4")
     elif 50 <= score <= 69:
         print("Баға: 3")
-    elif 0 <= score <= 49:
-        print("Баға: 2")
     else:
-        print("Қате: ұпай 0-100 аралығында болуы керек")
+        print("Баға: 2")
 except ValueError:
     print("Қате: бүтін сан енгізу керек")
 ```
