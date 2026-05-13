@@ -33,12 +33,14 @@
 **Күтілетін әрекет:** `if` арқылы тексеру.
 
 ```python
-n = int(input("Сан енгізіңіз: "))
-
-if n % 2 == 0:
-    print("Жұп сан")
-else:
-    print("Тақ сан")
+try:
+    n = int(input("Сан енгізіңіз: "))
+    if n % 2 == 0:
+        print("Жұп сан")
+    else:
+        print("Тақ сан")
+except ValueError:
+    print("Қате: бүтін сан енгізу керек")
 ```
 
 ### 2-деңгей (орташа)
@@ -47,18 +49,20 @@ else:
 **Күтілетін әрекет:** `if-elif-else` тізбегі.
 
 ```python
-score = int(input("Ұпайды енгізіңіз (0-100): "))
-
-if 90 <= score <= 100:
-    print("Баға: 5")
-elif 70 <= score <= 89:
-    print("Баға: 4")
-elif 50 <= score <= 69:
-    print("Баға: 3")
-elif 0 <= score <= 49:
-    print("Баға: 2")
-else:
-    print("Қате: ұпай 0-100 аралығында болуы керек")
+try:
+    score = int(input("Ұпайды енгізіңіз (0-100): "))
+    if 90 <= score <= 100:
+        print("Баға: 5")
+    elif 70 <= score <= 89:
+        print("Баға: 4")
+    elif 50 <= score <= 69:
+        print("Баға: 3")
+    elif 0 <= score <= 49:
+        print("Баға: 2")
+    else:
+        print("Қате: ұпай 0-100 аралығында болуы керек")
+except ValueError:
+    print("Қате: бүтін сан енгізу керек")
 ```
 
 ### 3-деңгей (жоғары)
@@ -66,23 +70,26 @@ else:
 **Қосымша шарт:** бөлу кезінде 0-ге бөлуді өңдеу.
 
 ```python
-a = float(input("Бірінші сан: "))
-b = float(input("Екінші сан: "))
-op = input("Амал (+, -, *, /): ")
+try:
+    a = float(input("Бірінші сан: "))
+    b = float(input("Екінші сан: "))
+    op = input("Амал (+, -, *, /): ")
 
-if op == "+":
-    print("Нәтиже:", a + b)
-elif op == "-":
-    print("Нәтиже:", a - b)
-elif op == "*":
-    print("Нәтиже:", a * b)
-elif op == "/":
-    if b == 0:
-        print("Қате: 0-ге бөлуге болмайды")
+    if op == "+":
+        print("Нәтиже:", a + b)
+    elif op == "-":
+        print("Нәтиже:", a - b)
+    elif op == "*":
+        print("Нәтиже:", a * b)
+    elif op == "/":
+        if b == 0:
+            print("Қате: 0-ге бөлуге болмайды")
+        else:
+            print("Нәтиже:", a / b)
     else:
-        print("Нәтиже:", a / b)
-else:
-    print("Қате: амал таңбасы дұрыс емес")
+        print("Қате: амал таңбасы дұрыс емес")
+except ValueError:
+    print("Қате: санды дұрыс форматта енгізіңіз")
 ```
 
 ## 6. Бағалау критерийі
