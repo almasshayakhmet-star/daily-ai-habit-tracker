@@ -1,10 +1,12 @@
 # daily-ai-habit-tracker
 
-Offline playable HTML game that can be copied into a local file.
+AI-powered iPhone app for tracking daily habits, nutrition, fitness, emotions, and goals through natural conversation.
+
+This repository also includes a simple standalone offline HTML game in `note.html`.
 
 ## Play locally
 
-1. Copy the full contents of `/home/runner/work/daily-ai-habit-tracker/daily-ai-habit-tracker/almasshayakhmet-star/daily-ai-habit-tracker/note.html`.
+1. Copy the full contents of `note.html`.
 2. Paste into Notepad.
 3. Save as `note.html`.
 4. Open `note.html` in your browser.
