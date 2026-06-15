@@ -92,21 +92,21 @@
 
     function play(playerMove) {
       const cpuMove = moves[Math.floor(Math.random() * moves.length)];
-      let result = "Draw";
+      let roundResult = "Draw";
 
       if (playerMove !== cpuMove) {
         if (beats[playerMove] === cpuMove) {
           you += 1;
-          result = "You win";
+          roundResult = "You win";
         } else {
           cpu += 1;
-          result = "CPU wins";
+          roundResult = "CPU wins";
         }
       }
 
       youEl.textContent = you;
       cpuEl.textContent = cpu;
-      statusEl.textContent = `You: ${playerMove} | CPU: ${cpuMove} → ${result}`;
+      statusEl.textContent = `You: ${playerMove} | CPU: ${cpuMove} → ${roundResult}`;
     }
 
     document.querySelectorAll("button[data-choice]").forEach((btn) => {
