@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Programming Quest</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom, #0f172a, #1e293b);
+      color: white;
+    }
+    #game-canvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+    }
+    .panel {
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+    }
+    .pixel-btn {
+      box-shadow: 4px 4px 0 rgba(0,0,0,0.35);
+      transition: all 0.12s ease;
+    }
+    .pixel-btn:hover {
+      transform: translateY(-2px);
+    }
+    .pixel-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 rgba(0,0,0,0.35);
+    }
+    .lesson-card code {
+      color: #fcd34d;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <div id="ui" class="absolute inset-0 z-10 pointer-events-none">
+    <div class="absolute top-4 left-4 panel rounded-xl px-4 py-3 pointer-events-auto max-w-sm">
+      <div class="text-xs uppercase tracking-widest text-slate-400">Course Mission</div>
+      <div class="text-xl font-bold text-amber-400">Web Programming Quest</div>
+      <p class="text-sm text-slate-300 mt-2">Walk through a 3D learning world and open stations to study HTML, CSS, and JavaScript basics.</p>
+    </div>
+
+    <div class="absolute top-4 right-4 panel rounded-xl px-4 py-3 pointer-events-auto">
+      <div class="text-xs uppercase tracking-widest text-slate-400">Progress</div>
+      <div id="progress-text" class="text-lg font-bold text-emerald-400">0 / 6 lessons completed</div>
+    </div>
+
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white opacity-80"></div>
+
+    <div id="interaction-prompt" class="absolute top-[58%] left-1/2 -translate-x-1/2 opacity-0 transition-opacity duration-300 bg-black/50 px-4 py-2 rounded-lg text-white text-lg font-bold">
+      Press <span class="text-amber-400">E</span> to open lesson
+    </div>
+
+    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 panel rounded-xl px-5 py-3 pointer-events-auto text-sm text-slate-300">
+      <span class="font-bold text-white">Controls:</span> WASD to move, Mouse to look, Space to jump, E to learn
+    </div>
+  </div>
+
+  <div id="start-screen" class="absolute inset-0 z-50 flex items-center justify-center bg-slate-950/95">
+    <div class="text-center max-w-3xl px-6">
+      <h1 class="text-6xl font-black text-white mb-4">Web Programming Quest</h1>
+      <p class="text-2xl text-amber-400 font-bold mb-4">A 3D-like learning game for beginner web developers</p>
+      <p class="text-slate-300 text-lg mb-8">This mini experience teaches learners the foundations of HTML, CSS, and JavaScript using interactive lesson stations inside a voxel-style world.</p>
+      <button id="btn-start" class="pixel-btn bg-amber-600 hover:bg-amber-500 text-white px-8 py-4 rounded-xl text-xl font-bold pointer-events-auto">Start Learning ▶</button>
+    </div>
+  </div>
+
+  <div id="lesson-modal" class="hidden absolute inset-0 z-50 bg-black/75 flex items-center justify-center p-4 pointer-events-auto">
+    <div class="panel rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-8">
+      <div class="flex items-start justify-between gap-4 mb-4">
+        <div>
+          <div class="text-sm uppercase tracking-widest text-slate-400">Lesson Station</div>
+          <h2 id="lesson-title" class="text-3xl font-bold text-amber-400">Lesson title</h2>
+        </div>
+        <button id="btn-close-lesson" class="text-slate-400 hover:text-white text-3xl leading-none">×</button>
+      </div>
+      <p id="lesson-description" class="text-slate-300 mb-6"></p>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="lesson-card bg-slate-900/60 rounded-xl p-5 border border-slate-700">
+          <h3 class="text-lg font-bold text-sky-400 mb-3">What you learn</h3>
+          <ul id="lesson-points" class="list-disc list-inside space-y-2 text-slate-200"></ul>
+        </div>
+        <div class="lesson-card bg-slate-900/60 rounded-xl p-5 border border-slate-700">
+          <h3 class="text-lg font-bold text-emerald-400 mb-3">Example</h3>
+          <pre id="lesson-code" class="text-sm whitespace-pre-wrap text-slate-200 bg-black/50 rounded-lg p-4 overflow-x-auto"></pre>
+        </div>
+      </div>
+      <div class="mt-6 flex flex-col sm:flex-row gap-3">
+        <button id="btn-complete-lesson" class="pixel-btn bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-3 rounded-xl font-bold">Mark lesson complete</button>
+        <button id="btn-close-lesson-secondary" class="pixel-btn bg-slate-700 hover:bg-slate-600 text-white px-5 py-3 rounded-xl font-bold">Back to world</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="success-modal" class="hidden absolute inset-0 z-50 bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
+    <div class="panel rounded-2xl max-w-xl w-full p-8 text-center">
+      <div class="text-6xl mb-4">🎉</div>
+      <h2 class="text-3xl font-bold text-emerald-400 mb-3">All lessons completed!</h2>
+      <p class="text-slate-300 mb-6">Great job. You explored the 3D world and finished all beginner web programming lesson stations.</p>
+      <button id="btn-close-success" class="pixel-btn bg-amber-600 hover:bg-amber-500 text-white px-6 py-3 rounded-xl font-bold">Keep Exploring</button>
+    </div>
+  </div>
+
+  <canvas id="game-canvas"></canvas>
+
+  <script type="module">
+    import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
+    import { PointerLockControls } from 'https://unpkg.com/three@0.160.0/examples/jsm/controls/PointerLockControls.js';
+
+    const lessons = [
+      {
+        id: 'html-intro',
+        title: 'Intro to Web Programming',
+        description: 'Understand what HTML, CSS, and JavaScript do in a website.',
+        points: [
+          'HTML gives a webpage its structure.',
+          'CSS styles colors, spacing, and layout.',
+          'JavaScript adds actions and interactivity.'
+        ],
+        code: `<h1>Hello, web!</h1>\n<p>HTML builds the page.</p>\n<style>p { color: blue; }</style>\n<script>console.log('JavaScript works');</script>`
+      },
+      {
+        id: 'html-structure',
+        title: 'HTML Structure',
+        description: 'Learn how to organize a page using headings, paragraphs, sections, and images.',
+        points: [
+          'Use tags like <html>, <head>, and <body>.',
+          'Use headings such as <h1> and <h2> for page titles.',
+          'Use <p>, <img>, and <a> to add basic content.'
+        ],
+        code: `<!DOCTYPE html>\n<html>\n  <head><title>My Page</title></head>\n  <body>\n    <h1>Welcome</h1>\n    <p>This is my first webpage.</p>\n  </body>\n</html>`
+      },
+      {
+        id: 'css-styling',
+        title: 'Styling a Website',
+        description: 'Apply CSS rules to make a webpage look better.',
+        points: [
+          'CSS can change colors, fonts, borders, and backgrounds.',
+          'A rule uses a selector and declarations.',
+          'You can style classes to reuse the same design.'
+        ],
+        code: `body {\n  background: #0f172a;\n  color: white;\n}\n.card {\n  padding: 16px;\n  border-radius: 12px;\n}`
+      },
+      {
+        id: 'css-layout',
+        title: 'Align Elements with CSS',
+        description: 'Use spacing and sizing to position content clearly on a page.',
+        points: [
+          'Margin adds space outside an element.',
+          'Padding adds space inside an element.',
+          'Width and height control element size.'
+        ],
+        code: `.box {\n  width: 220px;\n  margin: 20px auto;\n  padding: 16px;\n  text-align: center;\n}`
+      },
+      {
+        id: 'js-intro',
+        title: 'Intro to JavaScript',
+        description: 'Use JavaScript with functions and events on a webpage.',
+        points: [
+          'JavaScript can respond to clicks and keyboard input.',
+          'Functions group instructions together.',
+          'Events connect user actions to code.'
+        ],
+        code: `function sayHello() {\n  alert('Hello learner!');\n}\nbutton.addEventListener('click', sayHello);`
+      },
+      {
+        id: 'js-basics',
+        title: 'JavaScript Variables, Operators, and Loops',
+        description: 'Practice variables, data types, conditions, and loops.',
+        points: [
+          'Variables store values such as text and numbers.',
+          'Operators help compare and calculate values.',
+          'Loops repeat actions many times.'
+        ],
+        code: `let score = 0;\nfor (let i = 0; i < 3; i++) {\n  score += 1;\n}\nif (score === 3) {\n  console.log('Great job!');\n}`
+      }
+    ];
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x87ceeb);
+    scene.fog = new THREE.Fog(0x87ceeb, 20, 70);
+
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 2, 8);
+
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('game-canvas'), antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+    scene.add(ambientLight);
+
+    const sun = new THREE.DirectionalLight(0xffffff, 0.9);
+    sun.position.set(20, 30, 10);
+    sun.castShadow = true;
+    scene.add(sun);
+
+    const boxGeo = new THREE.BoxGeometry(1, 1, 1);
+    const grassMat = new THREE.MeshLambertMaterial({ color: 0x4ade80 });
+    const dirtMat = new THREE.MeshLambertMaterial({ color: 0x854d0e });
+    const pathMat = new THREE.MeshLambertMaterial({ color: 0xcbd5e1 });
+    const woodMat = new THREE.MeshLambertMaterial({ color: 0x8b5a2b });
+    const leafMat = new THREE.MeshLambertMaterial({ color: 0x166534 });
+
+    function addBlock(x, y, z, material) {
+      const mesh = new THREE.Mesh(boxGeo, material);
+      mesh.position.set(x, y, z);
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      scene.add(mesh);
+      return mesh;
+    }
+
+    for (let x = -32; x < 32; x++) {
+      for (let z = -32; z < 32; z++) {
+        addBlock(x, 0, z, grassMat);
+        addBlock(x, -1, z, dirtMat);
+      }
+    }
+
+    for (let z = -24; z <= 24; z++) {
+      addBlock(0, 1, z, pathMat);
+    }
+
+    function createTree(x, z) {
+      for (let y = 1; y <= 4; y++) addBlock(x, y, z, woodMat);
+      for (let dx = -2; dx <= 2; dx++) {
+        for (let dz = -2; dz <= 2; dz++) {
+          for (let dy = 3; dy <= 5; dy++) {
+            if (Math.abs(dx) + Math.abs(dz) + Math.abs(dy - 4) < 4) {
+              addBlock(x + dx, dy, z + dz, leafMat);
+            }
+          }
+        }
+      }
+    }
+
+    createTree(-10, -12);
+    createTree(10, -15);
+    createTree(-14, 14);
+    createTree(12, 16);
+
+    const stationMaterial = new THREE.MeshLambertMaterial({ color: 0xf59e0b });
+    const stationRoofMaterial = new THREE.MeshLambertMaterial({ color: 0x1d4ed8 });
+    const lessonStations = [];
+
+    function createStation(x, z, lesson, color = 0xf59e0b) {
+      const group = new THREE.Group();
+      const baseMat = new THREE.MeshLambertMaterial({ color });
+
+      for (let dx = -1; dx <= 1; dx++) {
+        for (let dz = -1; dz <= 1; dz++) {
+          const floor = new THREE.Mesh(boxGeo, baseMat);
+          floor.position.set(x + dx, 1, z + dz);
+          floor.castShadow = true;
+          floor.receiveShadow = true;
+          group.add(floor);
+        }
+      }
+
+      const roof = new THREE.Mesh(new THREE.BoxGeometry(3.4, 0.5, 3.4), stationRoofMaterial);
+      roof.position.set(x, 3.5, z);
+      roof.castShadow = true;
+      group.add(roof);
+
+      const beacon = new THREE.Mesh(new THREE.BoxGeometry(0.8, 2, 0.8), new THREE.MeshLambertMaterial({ color: 0xffffff }));
+      beacon.position.set(x, 2.5, z);
+      beacon.castShadow = true;
+      group.add(beacon);
+
+      group.userData.lesson = lesson;
+      group.position.set(0, 0, 0);
+      scene.add(group);
+      lessonStations.push(group);
+    }
+
+    createStation(-8, -18, lessons[0], 0xef4444);
+    createStation(8, -10, lessons[1], 0xf97316);
+    createStation(-8, -2, lessons[2], 0xeab308);
+    createStation(8, 6, lessons[3], 0x22c55e);
+    createStation(-8, 14, lessons[4], 0x06b6d4);
+    createStation(8, 22, lessons[5], 0x8b5cf6);
+
+    const controls = new PointerLockControls(camera, document.body);
+    const velocity = new THREE.Vector3();
+    const direction = new THREE.Vector3();
+    let moveForward = false;
+    let moveBackward = false;
+    let moveLeft = false;
+    let moveRight = false;
+    let canJump = false;
+    const keys = {};
+
+    const completedLessons = new Set();
+    let activeLesson = null;
+    let interactionLocked = false;
+
+    const startScreen = document.getElementById('start-screen');
+    const lessonModal = document.getElementById('lesson-modal');
+    const successModal = document.getElementById('success-modal');
+    const interactionPrompt = document.getElementById('interaction-prompt');
+    const progressText = document.getElementById('progress-text');
+    const lessonTitle = document.getElementById('lesson-title');
+    const lessonDescription = document.getElementById('lesson-description');
+    const lessonPoints = document.getElementById('lesson-points');
+    const lessonCode = document.getElementById('lesson-code');
+
+    function updateProgress() {
+      progressText.textContent = `${completedLessons.size} / ${lessons.length} lessons completed`;
+      if (completedLessons.size === lessons.length) {
+        successModal.classList.remove('hidden');
+      }
+    }
+
+    function openLesson(lesson) {
+      activeLesson = lesson;
+      interactionLocked = true;
+      lessonTitle.textContent = lesson.title;
+      lessonDescription.textContent = lesson.description;
+      lessonPoints.innerHTML = lesson.points.map(point => `<li>${point}</li>`).join('');
+      lessonCode.textContent = lesson.code;
+      lessonModal.classList.remove('hidden');
+      controls.unlock();
+    }
+
+    function closeLesson() {
+      lessonModal.classList.add('hidden');
+      interactionLocked = false;
+    }
+
+    function markLessonComplete() {
+      if (!activeLesson) return;
+      completedLessons.add(activeLesson.id);
+      updateProgress();
+      closeLesson();
+    }
+
+    document.getElementById('btn-start').addEventListener('click', () => {
+      startScreen.style.display = 'none';
+      controls.lock();
+    });
+
+    document.getElementById('btn-close-lesson').addEventListener('click', closeLesson);
+    document.getElementById('btn-close-lesson-secondary').addEventListener('click', closeLesson);
+    document.getElementById('btn-complete-lesson').addEventListener('click', markLessonComplete);
+    document.getElementById('btn-close-success').addEventListener('click', () => successModal.classList.add('hidden'));
+
+    document.addEventListener('keydown', (e) => {
+      keys[e.code] = true;
+      switch (e.code) {
+        case 'ArrowUp':
+        case 'KeyW':
+          moveForward = true;
+          break;
+        case 'ArrowLeft':
+        case 'KeyA':
+          moveLeft = true;
+          break;
+        case 'ArrowDown':
+        case 'KeyS':
+          moveBackward = true;
+          break;
+        case 'ArrowRight':
+        case 'KeyD':
+          moveRight = true;
+          break;
+        case 'Space':
+          if (canJump && controls.isLocked) {
+            velocity.y += 12;
+            canJump = false;
+          }
+          break;
+      }
+    });
+
+    document.addEventListener('keyup', (e) => {
+      keys[e.code] = false;
+      switch (e.code) {
+        case 'ArrowUp':
+        case 'KeyW':
+          moveForward = false;
+          break;
+        case 'ArrowLeft':
+        case 'KeyA':
+          moveLeft = false;
+          break;
+        case 'ArrowDown':
+        case 'KeyS':
+          moveBackward = false;
+          break;
+        case 'ArrowRight':
+        case 'KeyD':
+          moveRight = false;
+          break;
+      }
+    });
+
+    const raycaster = new THREE.Raycaster();
+    const center = new THREE.Vector2(0, 0);
+
+    function checkInteraction() {
+      if (interactionLocked) {
+        interactionPrompt.style.opacity = 0;
+        return;
+      }
+
+      raycaster.setFromCamera(center, camera);
+      const stationMeshes = lessonStations.flatMap((group) => group.children);
+      const intersects = raycaster.intersectObjects(stationMeshes, true);
+
+      if (intersects.length > 0 && intersects[0].distance < 6) {
+        interactionPrompt.style.opacity = 1;
+        if (keys['KeyE']) {
+          const parentGroup = lessonStations.find(group => group.children.includes(intersects[0].object));
+          if (parentGroup) {
+            keys['KeyE'] = false;
+            openLesson(parentGroup.userData.lesson);
+          }
+        }
+      } else {
+        interactionPrompt.style.opacity = 0;
+      }
+    }
+
+    const clock = new THREE.Clock();
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const delta = clock.getDelta();
+
+      if (controls.isLocked) {
+        velocity.x -= velocity.x * 10.0 * delta;
+        velocity.z -= velocity.z * 10.0 * delta;
+        velocity.y -= 9.8 * 3.0 * delta;
+
+        direction.z = Number(moveForward) - Number(moveBackward);
+        direction.x = Number(moveRight) - Number(moveLeft);
+        direction.normalize();
+
+        if (moveForward || moveBackward) velocity.z -= direction.z * 90.0 * delta;
+        if (moveLeft || moveRight) velocity.x -= direction.x * 90.0 * delta;
+
+        controls.moveRight(-velocity.x * delta);
+        controls.moveForward(-velocity.z * delta);
+        camera.position.y += velocity.y * delta;
+
+        if (camera.position.y < 2) {
+          velocity.y = 0;
+          camera.position.y = 2;
+          canJump = true;
+        }
+
+        checkInteraction();
+      }
+
+      lessonStations.forEach((group, index) => {
+        group.rotation.y = Math.sin(Date.now() * 0.001 + index) * 0.08;
+      });
+
+      renderer.render(scene, camera);
+    }
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    updateProgress();
+    animate();
+  </script>
+</body>
+</html>
