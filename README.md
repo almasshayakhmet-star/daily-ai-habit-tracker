@@ -2,7 +2,7 @@
 
 AI-powered iPhone app for tracking daily habits, nutrition, fitness, emotions, and goals through natural conversation.
 
-This repository also includes a simple standalone offline Rock Paper Scissors game in `note.html` as a self-contained local HTML play sample for this task.
+This repository also includes a simple standalone offline Rock Paper Scissors game in `note.html` as a self-contained local HTML play sample.
 
 ## Play locally
 
